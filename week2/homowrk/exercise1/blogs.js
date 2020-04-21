@@ -1,39 +1,45 @@
-const express = require('express');
-const app = express();
+
+const express = require('express')
+const app = express()
 const fs = require("fs");
+
+const port =  3000;
+
 app.use(express.json());
+
+
 app.post('/blogs', (req, res) => {
-   
-    
-    fs.writeFileSync("file.text", `${req.body.title} ${req.body.content}`);
-   
-    res.end('ok')
+    const title = req.body.title;
+    const content = req.body.content;
+    fs.writeFileSync(title, content);
+res.end('ok')
 })
+
 app.put('/blogs', (req, res) => {
-    
-    if (fs.existsSync("file.text")) {
-        fs.writeFileSync("file.text", `${req.body.title} ${req.body.content}`);
-        res.end('ok')
-      }
-      else {
-        res.end('post does not exist');
-      }
-    
-   
-    res.end('ok')
-})
-// app.delete('/blogs', (req, res) => {
-//     // How to get the tilte from the url parameters?
-//     fs.unlinkSync("file.text");
-//     res.end('ok');
-// })
+    const title = req.body.title;
+    const content = req.body.content;
 
-app.get('/blogs', (req, res) => {
-   
-     res.sendfile("file.text");
+    if (fs.existsSync(title)) {
+      fs.writeFileSync(title, content);
+      res.end('ok')
+    }
+    else {
+      res.end('post does not exist');
+    }
 })
 
 
+app.delete('/blogs/:title', (req, res) => {
+    const title = req.params.title
 
-app.listen(3000)
+    fs.unlinkSync(title);
+    res.end('ok');
+})
 
+app.get('/blogs/:title', (req, res) => {
+    const title = req.params.title;
+    res.sendfile(title);
+    res.end('ok');
+})
+
+app.listen(port); 
